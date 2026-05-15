@@ -1,0 +1,41 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Docker Images (Dry Run)
+      run: |
+        # We use docker compose to build the images to ensure our Dockerfile is healthy.
+        # This acts as our primary integration test for the environment.
+        docker compose build
+        
+    - name: Start Containers in Background
+      run: |
+        docker compose up -d
+        # Give the containers a few seconds to start up
+        sleep 10
+        
+    - name: Check Container Status
+      run: |
+        docker compose ps
+        
+        # Verify the API is running and responding
+        curl -f http://localhost:8000/api/health || exit 1
+        
+    - name: Tear Down
+      if: always()
+      run: docker compose down
