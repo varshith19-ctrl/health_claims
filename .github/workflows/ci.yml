@@ -25,6 +25,7 @@ jobs:
         
     - name: Start Containers in Background
       run: |
+        touch .env
         docker compose up -d
         # Give the containers a few seconds to start up
         sleep 10
