@@ -153,7 +153,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-API_URL = "http://localhost:8000/api"
+API_URL = os.getenv("API_URL", "http://localhost:8000/api")
 
 
 def render_header():

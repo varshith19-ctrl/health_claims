@@ -34,7 +34,7 @@ def _load_model():
     Caches these in memory to avoid reloading on every prediction request.
     """
     global _model, _explainer, _feature_cols
-    if _model is not None:
+    if _model is not None and _explainer is not None:
         return
 
     model_path = MODEL_DIR / "xgboost.pkl"

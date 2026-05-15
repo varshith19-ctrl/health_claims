@@ -57,5 +57,6 @@ async def predict_claim(request: ClaimRequest):
     except HTTPException:
         raise
     except Exception as exc:
-        log.error("Prediction failed: %s", exc)
+        import traceback
+        log.error("Prediction failed: %s\n%s", exc, traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(exc))

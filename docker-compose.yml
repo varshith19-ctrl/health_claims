@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: health_claims_api
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    networks:
+      - claims_network
+
+  dashboard:
+    build: .
+    container_name: health_claims_dashboard
+    command: streamlit run dashboard/app.py --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    environment:
+      - API_URL=http://api:8000/api
+    volumes:
+      - .:/app
+    depends_on:
+      - api
+    networks:
+      - claims_network
+
+networks:
+  claims_network:
+    driver: bridge
