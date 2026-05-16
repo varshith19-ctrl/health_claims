@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ "main", "master" ]
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,26 +17,34 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Build Docker Images (Dry Run)
-      run: |
-        # We use docker compose to build the images to ensure our Dockerfile is healthy.
-        # This acts as our primary integration test for the environment.
-        docker compose build
-        
-    - name: Start Containers in Background
+    - name: Build Docker Image
+      run: docker compose build
+
+    - name: Run Tests Inside Container
       run: |
         touch .env
-        docker compose up -d
-        # Give the containers a few seconds to start up
-        sleep 10
-        
-    - name: Check Container Status
-      run: |
-        docker compose ps
-        
-        # Verify the API is running and responding
-        curl -f http://localhost:8000/api/health || exit 1
-        
+        docker compose run --rm api python -m pytest tests/ -v --tb=short
+
     - name: Tear Down
       if: always()
       run: docker compose down
+
+  deploy-api:
+    needs: test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy API to Render
+      run: |
+        curl -X POST "${{ secrets.RENDER_API_DEPLOY_HOOK }}"
+
+  deploy-dashboard:
+    needs: test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy Dashboard to Render
+      run: |
+        curl -X POST "${{ secrets.RENDER_DASHBOARD_DEPLOY_HOOK }}"

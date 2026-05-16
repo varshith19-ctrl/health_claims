@@ -1,0 +1,18 @@
+{
+  "C:\\Users\\varsh\\OneDrive\\Desktop\\health_claims_project\\raw_data\\claims_1000.csv": {
+    "hash": "4c00e2078e6f0705044daa492289acf3",
+    "processed_at": "2026-05-12T19:26:04.187968+00:00"
+  },
+  "C:\\Users\\varsh\\OneDrive\\Desktop\\health_claims_project\\raw_data\\providers_1000.csv": {
+    "hash": "b7a1f0afca6896fede2596e28461b372",
+    "processed_at": "2026-05-12T19:26:04.189035+00:00"
+  },
+  "C:\\Users\\varsh\\OneDrive\\Desktop\\health_claims_project\\raw_data\\diagnosis.csv": {
+    "hash": "e94fd9d88082a5414e3dac19dbd1a5a7",
+    "processed_at": "2026-05-12T19:26:04.189851+00:00"
+  },
+  "C:\\Users\\varsh\\OneDrive\\Desktop\\health_claims_project\\raw_data\\cost.csv": {
+    "hash": "5f0f0687163c9ff86c452a7286e0d0ce",
+    "processed_at": "2026-05-12T19:26:04.190554+00:00"
+  }
+}
