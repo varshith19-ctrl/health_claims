@@ -8,16 +8,16 @@ from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from monitoring.logger import get_logger
-from config.settings import BRONZE_DIR, SILVER_DIR
+from storage.storage_backend import storage
 
 log = get_logger("silver.silver_layer")
 
 
 def _load_bronze(name: str) -> pd.DataFrame:
-    path = BRONZE_DIR / f"bronze_{name}_raw.parquet"
-    if not path.exists():
-        raise FileNotFoundError(f"Bronze table missing: {path}")
-    return pd.read_parquet(path)
+    key = f"data/bronze/bronze_{name}_raw.parquet"
+    if not storage.file_exists(key):
+        raise FileNotFoundError(f"Bronze table missing: {key}")
+    return storage.read_parquet(key)
 
 
 def _clean_claims(df: pd.DataFrame) -> pd.DataFrame:
@@ -87,10 +87,10 @@ def build_silver() -> dict[str, pd.DataFrame]:
     }
 
     for name, df in tables.items():
-        out = SILVER_DIR / f"silver_{name}.parquet"
-        df.to_parquet(out, index=False)
+        key = f"data/silver/silver_{name}.parquet"
+        storage.write_parquet(df, key)
         results[name] = df
-        log.info("Silver %s: %d rows -> %s", name, len(df), out.name)
+        log.info("Silver %s: %d rows -> %s", name, len(df), key)
 
     log.info("=== Silver Layer: Complete ===")
     return results

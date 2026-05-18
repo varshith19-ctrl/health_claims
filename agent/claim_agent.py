@@ -8,7 +8,7 @@ from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from monitoring.logger import get_logger
-from config.settings import SILVER_DIR
+from storage.storage_backend import storage
 
 log = get_logger("agent.claim_agent")
 
@@ -43,8 +43,8 @@ def validate_claim(claim: dict) -> list[str]:
 def _build_features(claim: dict) -> dict:
     """
     Constructs feature values for the ML model based on the claim data.
-    Retrieves historical/statistical data (averages, severity, frequency) from 
-    local parquet files (Silver layer) to engineer the features.
+    Retrieves historical/statistical data (averages, severity, frequency) from
+    Silver layer parquet files to engineer the features.
     
     Args:
         claim (dict): The validated claim data.
@@ -53,11 +53,6 @@ def _build_features(claim: dict) -> dict:
         dict: A dictionary of engineered features required for ML prediction.
     """
     billed = float(claim.get("billed_amount", 0))
-
-    providers_path = SILVER_DIR / "silver_providers.parquet"
-    diagnosis_path = SILVER_DIR / "silver_diagnosis.parquet"
-    cost_path = SILVER_DIR / "silver_cost.parquet"
-    claims_path = SILVER_DIR / "silver_claims.parquet"
 
     avg_cost = 10000.0
     severity_score = 2
@@ -69,8 +64,9 @@ def _build_features(claim: dict) -> dict:
     # If files are missing or lookup fails, defaults (above) are retained.
 
     try:
-        if cost_path.exists():
-            cost_df = pd.read_parquet(cost_path)
+        cost_key = "data/silver/silver_cost.parquet"
+        if storage.file_exists(cost_key):
+            cost_df = storage.read_parquet(cost_key)
             match = cost_df[cost_df["procedure_code"] == claim.get("procedure_code")]
             if not match.empty:
                 avg_cost = float(match["average_cost"].iloc[0])
@@ -78,8 +74,9 @@ def _build_features(claim: dict) -> dict:
         pass
 
     try:
-        if diagnosis_path.exists():
-            diag_df = pd.read_parquet(diagnosis_path)
+        diag_key = "data/silver/silver_diagnosis.parquet"
+        if storage.file_exists(diag_key):
+            diag_df = storage.read_parquet(diag_key)
             match = diag_df[diag_df["diagnosis_code"] == claim.get("diagnosis_code")]
             if not match.empty:
                 sev = match["severity"].iloc[0]
@@ -88,8 +85,9 @@ def _build_features(claim: dict) -> dict:
         pass
 
     try:
-        if providers_path.exists():
-            prov_df = pd.read_parquet(providers_path)
+        prov_key = "data/silver/silver_providers.parquet"
+        if storage.file_exists(prov_key):
+            prov_df = storage.read_parquet(prov_key)
             match = prov_df[prov_df["provider_id"] == claim.get("provider_id")]
             if not match.empty:
                 spec = match["specialty"].iloc[0]
@@ -99,8 +97,9 @@ def _build_features(claim: dict) -> dict:
         pass
 
     try:
-        if claims_path.exists():
-            claims_df = pd.read_parquet(claims_path)
+        claims_key = "data/silver/silver_claims.parquet"
+        if storage.file_exists(claims_key):
+            claims_df = storage.read_parquet(claims_key)
             prov_claims = claims_df[claims_df["provider_id"] == claim.get("provider_id")]
             if not prov_claims.empty:
                 provider_claim_count = len(prov_claims)

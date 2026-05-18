@@ -43,3 +43,19 @@ RANDOM_STATE = 42
 API_HOST = "0.0.0.0"
 API_PORT = 8000
 API_TOKEN = os.getenv("API_TOKEN", "health-claims-secret-token")
+
+# ── AWS Configuration ──────────────────────────────────────────────
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID", "")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY", "")
+AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
+S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME", "health-claims-bny")
+STORAGE_BACKEND = os.getenv("STORAGE_BACKEND", "local")  # "local" or "s3"
+
+# S3 key prefixes (mirror local directory structure)
+S3_RAW_PREFIX = "raw_data/"
+S3_BRONZE_PREFIX = "data/bronze/"
+S3_SILVER_PREFIX = "data/silver/"
+S3_GOLD_PREFIX = "data/gold/"
+S3_MODELS_PREFIX = "ml/models/"
+S3_VECTOR_PREFIX = "data/vector_store/"
+S3_CHECKPOINT_PREFIX = "data/checkpoints/"

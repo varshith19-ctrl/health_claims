@@ -11,13 +11,14 @@ from rank_bm25 import BM25Okapi
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from monitoring.logger import get_logger
-from config.settings import VECTOR_STORE_DIR, TOP_K_RETRIEVAL
+from config.settings import TOP_K_RETRIEVAL
 from rag.embeddings import embed_single
 from rag.vector_store import search as faiss_search
+from storage.storage_backend import storage
 
 log = get_logger("rag.retriever")
 
-METADATA_PATH = VECTOR_STORE_DIR / "chunk_metadata.json"
+METADATA_KEY = "data/vector_store/chunk_metadata.json"
 _bm25 = None
 _corpus_texts = None
 
@@ -31,11 +32,11 @@ def _load_bm25():
     if _bm25 is not None:
         return
 
-    if not METADATA_PATH.exists():
+    if not storage.file_exists(METADATA_KEY):
         log.warning("Chunk metadata not found for BM25")
         return
 
-    metadata = json.loads(METADATA_PATH.read_text(encoding="utf-8"))
+    metadata = storage.read_json(METADATA_KEY)
     _corpus_texts = [m["text"] for m in metadata]
     tokenized = [text.lower().split() for text in _corpus_texts]
     _bm25 = BM25Okapi(tokenized)
@@ -61,7 +62,7 @@ def _bm25_search(query: str, top_k: int) -> list[dict]:
     scores = _bm25.get_scores(tokens)
     top_indices = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:top_k]
 
-    metadata = json.loads(METADATA_PATH.read_text(encoding="utf-8"))
+    metadata = storage.read_json(METADATA_KEY)
     results = []
     for idx in top_indices:
         if scores[idx] > 0:

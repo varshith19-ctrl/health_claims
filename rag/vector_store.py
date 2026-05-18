@@ -9,32 +9,45 @@ from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from monitoring.logger import get_logger
-from config.settings import VECTOR_STORE_DIR, EMBEDDING_DIMENSION
+from config.settings import EMBEDDING_DIMENSION
+from storage.storage_backend import storage
 
 log = get_logger("rag.vector_store")
 
-INDEX_PATH = VECTOR_STORE_DIR / "faiss.index"
-METADATA_PATH = VECTOR_STORE_DIR / "chunk_metadata.json"
+INDEX_KEY = "data/vector_store/faiss.index"
+METADATA_KEY = "data/vector_store/chunk_metadata.json"
 
 
 def build_index(embeddings: list[list[float]], chunks: list[dict]) -> None:
     vectors = np.array(embeddings, dtype="float32")
     index = faiss.IndexFlatL2(EMBEDDING_DIMENSION)
     index.add(vectors)
-    faiss.write_index(index, str(INDEX_PATH))
+
+    # FAISS requires a file path — write to local then upload
+    local_path = storage.abs_path(INDEX_KEY)
+    local_path.parent.mkdir(parents=True, exist_ok=True)
+    faiss.write_index(index, str(local_path))
+
+    # If using S3, upload the written file
+    from config.settings import STORAGE_BACKEND
+    if STORAGE_BACKEND == "s3":
+        from storage.s3_client import upload_file
+        upload_file(local_path, INDEX_KEY)
 
     metadata = [{"text": c["text"], "document": c["document"], "section": c["section"]} for c in chunks]
-    METADATA_PATH.write_text(json.dumps(metadata, indent=2), encoding="utf-8")
+    storage.write_json(metadata, METADATA_KEY)
     log.info("FAISS index built: %d vectors, dim=%d", index.ntotal, EMBEDDING_DIMENSION)
 
 
 def search(query_embedding: list[float], top_k: int = 5) -> list[dict]:
-    if not INDEX_PATH.exists():
+    if not storage.file_exists(INDEX_KEY):
         log.warning("FAISS index not found")
         return []
 
-    index = faiss.read_index(str(INDEX_PATH))
-    metadata = json.loads(METADATA_PATH.read_text(encoding="utf-8"))
+    # FAISS needs a local file path
+    local_index_path = storage.abs_path(INDEX_KEY)
+    index = faiss.read_index(str(local_index_path))
+    metadata = storage.read_json(METADATA_KEY)
 
     query_vec = np.array([query_embedding], dtype="float32")
     distances, indices = index.search(query_vec, top_k)

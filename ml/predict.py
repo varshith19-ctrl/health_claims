@@ -11,7 +11,7 @@ from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from monitoring.logger import get_logger
-from config.settings import MODEL_DIR
+from storage.storage_backend import storage
 
 log = get_logger("ml.predict")
 
@@ -37,12 +37,12 @@ def _load_model():
     if _model is not None and _explainer is not None:
         return
 
-    model_path = MODEL_DIR / "xgboost.pkl"
-    if not model_path.exists():
-        raise FileNotFoundError(f"Model not found: {model_path}")
+    model_key = "ml/models/xgboost.pkl"
+    if not storage.file_exists(model_key):
+        raise FileNotFoundError(f"Model not found: {model_key}")
 
-    _model = joblib.load(model_path)
-    _feature_cols = joblib.load(MODEL_DIR / "feature_columns.pkl")
+    _model = storage.read_pickle(model_key)
+    _feature_cols = storage.read_pickle("ml/models/feature_columns.pkl")
     _explainer = shap.TreeExplainer(_model)
     log.info("Model and SHAP explainer loaded")
 

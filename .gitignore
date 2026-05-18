@@ -12,6 +12,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.so
+.pytest_cache/
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -34,3 +35,7 @@ raw_data/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# AWS
+*.pem
+*.key

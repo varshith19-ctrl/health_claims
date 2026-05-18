@@ -9,7 +9,7 @@ from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from monitoring.logger import get_logger
-from config.settings import SILVER_DIR, GOLD_DIR
+from storage.storage_backend import storage
 
 log = get_logger("gold.gold_layer")
 
@@ -17,11 +17,11 @@ log = get_logger("gold.gold_layer")
 def build_gold() -> pd.DataFrame:
     log.info("=== Gold Layer: Starting feature engineering ===")
 
-    silver_path = SILVER_DIR / "silver_claims.parquet"
-    if not silver_path.exists():
-        raise FileNotFoundError(f"Silver claims missing: {silver_path}")
+    silver_key = "data/silver/silver_claims.parquet"
+    if not storage.file_exists(silver_key):
+        raise FileNotFoundError(f"Silver claims missing: {silver_key}")
 
-    df = pd.read_parquet(silver_path)
+    df = storage.read_parquet(silver_key)
 
     # Cost features
     df["billed_vs_avg_ratio"] = np.where(
@@ -58,9 +58,9 @@ def build_gold() -> pd.DataFrame:
     ]
     gold = df[feature_cols].copy()
 
-    out = GOLD_DIR / "gold_claim_features.parquet"
-    gold.to_parquet(out, index=False)
-    log.info("Gold features: %d rows, %d features -> %s", len(gold), len(feature_cols) - 2, out.name)
+    gold_key = "data/gold/gold_claim_features.parquet"
+    storage.write_parquet(gold, gold_key)
+    log.info("Gold features: %d rows, %d features -> %s", len(gold), len(feature_cols) - 2, gold_key)
     log.info("=== Gold Layer: Complete ===")
     return gold
 

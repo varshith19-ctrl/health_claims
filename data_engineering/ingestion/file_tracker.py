@@ -10,11 +10,11 @@ from datetime import datetime, timezone
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from monitoring.logger import get_logger
-from config.settings import CHECKPOINT_DIR
+from storage.storage_backend import storage
 
 log = get_logger("ingestion.file_tracker")
 
-CHECKPOINT_FILE = CHECKPOINT_DIR / "ingestion_checkpoint.json"
+CHECKPOINT_KEY = "data/checkpoints/ingestion_checkpoint.json"
 
 
 def _file_hash(path: Path) -> str:
@@ -24,18 +24,16 @@ def _file_hash(path: Path) -> str:
 
 
 def load_checkpoint() -> dict:
-    if CHECKPOINT_FILE.exists():
+    if storage.file_exists(CHECKPOINT_KEY):
         try:
-            return json.loads(CHECKPOINT_FILE.read_text(encoding="utf-8"))
+            return storage.read_json(CHECKPOINT_KEY)
         except Exception as exc:
             log.warning("Corrupt checkpoint, resetting: %s", exc)
     return {}
 
 
 def save_checkpoint(state: dict) -> None:
-    CHECKPOINT_FILE.write_text(
-        json.dumps(state, indent=2, default=str), encoding="utf-8"
-    )
+    storage.write_json(state, CHECKPOINT_KEY)
     log.info("Checkpoint saved with %d entries", len(state))
 
 

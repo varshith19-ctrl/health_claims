@@ -12,8 +12,9 @@ from xgboost import XGBClassifier
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from monitoring.logger import get_logger
-from config.settings import GOLD_DIR, MODEL_DIR, TEST_SPLIT_RATIO, RANDOM_STATE
+from config.settings import TEST_SPLIT_RATIO, RANDOM_STATE
 from ml.evaluate import evaluate_model
+from storage.storage_backend import storage
 
 log = get_logger("ml.train")
 
@@ -26,11 +27,11 @@ TARGET_COL = "claim_status"
 
 
 def load_training_data():
-    path = GOLD_DIR / "gold_claim_features.parquet"
-    if not path.exists():
-        raise FileNotFoundError(f"Gold features missing: {path}")
+    gold_key = "data/gold/gold_claim_features.parquet"
+    if not storage.file_exists(gold_key):
+        raise FileNotFoundError(f"Gold features missing: {gold_key}")
 
-    df = pd.read_parquet(path)
+    df = storage.read_parquet(gold_key)
     X = df[FEATURE_COLS]
     y = df[TARGET_COL]
 
@@ -46,9 +47,8 @@ def train_logistic_regression(X_train, y_train):
     log.info("Training Logistic Regression...")
     model = LogisticRegression(max_iter=1000, random_state=RANDOM_STATE)
     model.fit(X_train, y_train)
-    path = MODEL_DIR / "logistic_regression.pkl"
-    joblib.dump(model, path)
-    log.info("Logistic Regression saved: %s", path.name)
+    storage.write_pickle(model, "ml/models/logistic_regression.pkl")
+    log.info("Logistic Regression saved to storage")
     return model
 
 
@@ -60,9 +60,8 @@ def train_xgboost(X_train, y_train):
         use_label_encoder=False,
     )
     model.fit(X_train, y_train)
-    path = MODEL_DIR / "xgboost.pkl"
-    joblib.dump(model, path)
-    log.info("XGBoost saved: %s", path.name)
+    storage.write_pickle(model, "ml/models/xgboost.pkl")
+    log.info("XGBoost saved to storage")
     return model
 
 
@@ -76,7 +75,7 @@ def train_all():
     xgb_model = train_xgboost(X_train, y_train)
     evaluate_model(xgb_model, X_test, y_test, "XGBoost")
 
-    joblib.dump(FEATURE_COLS, MODEL_DIR / "feature_columns.pkl")
+    storage.write_pickle(FEATURE_COLS, "ml/models/feature_columns.pkl")
     log.info("=== ML Training: Complete ===")
     return lr_model, xgb_model
 

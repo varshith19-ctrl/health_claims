@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from monitoring.logger import get_logger
 from config.settings import RAW_FILES, BRONZE_DIR
 from data_engineering.ingestion.file_tracker import get_new_files, mark_processed
+from storage.storage_backend import storage
 
 log = get_logger("bronze.bronze_layer")
 
@@ -56,17 +57,17 @@ def ingest_to_bronze() -> dict[str, pd.DataFrame]:
     if not new_files:
         log.info("No new files to process. Loading existing bronze data.")
         for name, fp in RAW_FILES.items():
-            bronze_path = BRONZE_DIR / f"bronze_{name}_raw.parquet"
-            if bronze_path.exists():
-                results[name] = pd.read_parquet(bronze_path)
+            bronze_key = f"data/bronze/bronze_{name}_raw.parquet"
+            if storage.file_exists(bronze_key):
+                results[name] = storage.read_parquet(bronze_key)
         return results
 
     processed = []
     for name, fp in RAW_FILES.items():
         if fp not in new_files:
-            bronze_path = BRONZE_DIR / f"bronze_{name}_raw.parquet"
-            if bronze_path.exists():
-                results[name] = pd.read_parquet(bronze_path)
+            bronze_key = f"data/bronze/bronze_{name}_raw.parquet"
+            if storage.file_exists(bronze_key):
+                results[name] = storage.read_parquet(bronze_key)
             continue
 
         try:
@@ -76,11 +77,11 @@ def ingest_to_bronze() -> dict[str, pd.DataFrame]:
             df["_ingested_at"] = datetime.now(timezone.utc).isoformat()
             df["_source_file"] = fp.name
 
-            out_path = BRONZE_DIR / f"bronze_{name}_raw.parquet"
-            df.to_parquet(out_path, index=False)
+            bronze_key = f"data/bronze/bronze_{name}_raw.parquet"
+            storage.write_parquet(df, bronze_key)
             results[name] = df
             processed.append(fp)
-            log.info("Bronze %s: %d rows written to %s", name, len(df), out_path.name)
+            log.info("Bronze %s: %d rows written to %s", name, len(df), bronze_key)
         except Exception as exc:
             log.error("Failed to ingest %s: %s", name, exc)
             raise

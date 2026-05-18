@@ -14,14 +14,14 @@ faiss-cpu>=1.7.4
 rank-bm25>=0.2.2
 openai>=1.0.0
 
-# API
+# API + Frontend (served by FastAPI)
 fastapi>=0.104.0
 uvicorn>=0.24.0
 pydantic>=2.0.0
-
-# Dashboard
-streamlit>=1.28.0
 requests>=2.31.0
+
+# AWS
+boto3>=1.28.0
 
 # Utilities
 python-dotenv>=1.0.0
