@@ -458,6 +458,26 @@ function renderResults(data) {
         traceHtml += `<div class="trace-step"><div><div class="trace-node">${step.node} — ${step.label}</div><div class="trace-detail">${step.detail}</div></div></div>`;
     });
     document.getElementById('result-trace').innerHTML = traceHtml;
+
+    // Show/hide sections based on prediction status
+    const detailSections = [
+        'result-factors',
+        'result-contributions',
+        'result-policy',
+        'result-recommendations',
+        'result-trace'
+    ];
+    if (prediction === 'ACCEPTED') {
+        detailSections.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        });
+    } else {
+        detailSections.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'block';
+        });
+    }
 }
 
 function resetClaimForm() {
