@@ -12,3 +12,4 @@ venv/
 .idea/
 .vscode/
 *.docx
+.s3_cache
