@@ -1,18 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ClaimShield AI — Claim Denial Prevention</title>
-    <meta name="description" content="AI-powered healthcare claim denial prediction, policy-based explanations, and actionable remediation.">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+    <title>ClaimShield AI — Claim Denial Preventionsss</title>
+    <meta name="description"
+        content="AI-powered healthcare claim denial prediction, policy-based explanations, and actionable remediation.">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/static/css/styles.css">
     <!-- Three.js for 3D animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
+
 <body>
     <!-- ============================================================ -->
     <!--  LOGIN / REGISTER PAGE                                        -->
@@ -45,11 +51,13 @@
                     <form id="login-form" onsubmit="return handleLogin(event)">
                         <div class="form-group">
                             <label for="login-username">Username</label>
-                            <input type="text" id="login-username" placeholder="Enter your username" required autocomplete="username">
+                            <input type="text" id="login-username" placeholder="Enter your username" required
+                                autocomplete="username">
                         </div>
                         <div class="form-group">
                             <label for="login-password">Password</label>
-                            <input type="password" id="login-password" placeholder="Enter your password" required autocomplete="current-password">
+                            <input type="password" id="login-password" placeholder="Enter your password" required
+                                autocomplete="current-password">
                         </div>
                         <div id="login-error" class="form-error" style="display:none;"></div>
                         <button type="submit" class="btn-primary" id="btn-login">
@@ -70,15 +78,18 @@
                     <form id="register-form" onsubmit="return handleRegister(event)">
                         <div class="form-group">
                             <label for="reg-username">Username</label>
-                            <input type="text" id="reg-username" placeholder="Choose a username" required autocomplete="username">
+                            <input type="text" id="reg-username" placeholder="Choose a username" required
+                                autocomplete="username">
                         </div>
                         <div class="form-group">
                             <label for="reg-password">Password</label>
-                            <input type="password" id="reg-password" placeholder="Create a password" required autocomplete="new-password">
+                            <input type="password" id="reg-password" placeholder="Create a password" required
+                                autocomplete="new-password">
                         </div>
                         <div class="form-group">
                             <label for="reg-password-confirm">Confirm Password</label>
-                            <input type="password" id="reg-password-confirm" placeholder="Confirm your password" required autocomplete="new-password">
+                            <input type="password" id="reg-password-confirm" placeholder="Confirm your password"
+                                required autocomplete="new-password">
                         </div>
                         <div id="register-error" class="form-error" style="display:none;"></div>
                         <div id="register-success" class="form-success" style="display:none;"></div>
@@ -103,7 +114,10 @@
         <nav class="top-nav">
             <div class="nav-left">
                 <div class="nav-logo-icon">
-                    <div class="nav-plus-mini"><div class="mp-h"></div><div class="mp-v"></div></div>
+                    <div class="nav-plus-mini">
+                        <div class="mp-h"></div>
+                        <div class="mp-v"></div>
+                    </div>
                 </div>
                 <span class="nav-brand">ClaimShield AI</span>
             </div>
@@ -118,8 +132,10 @@
         <section class="home-hero">
             <div class="hero-glow"></div>
             <div class="hero-text-container">
-                <h1 class="home-title">Prevent Claim Denials<br><span class="gradient-text">Before They Happen</span></h1>
-                <p class="home-subtitle">Our AI-powered platform analyzes healthcare claims in real-time, predicts denial risks, and provides actionable remediation — saving hospitals millions annually.</p>
+                <h1 class="home-title">Prevent Claim Denials<br><span class="gradient-text">Before They Happen</span>
+                </h1>
+                <p class="home-subtitle">Our AI-powered platform analyzes healthcare claims in real-time, predicts
+                    denial risks, and provides actionable remediation — saving hospitals millions annually.</p>
                 <div class="hero-stats">
                     <div class="stat-item">
                         <span class="stat-number" data-target="97">0</span><span class="stat-suffix">%</span>
@@ -145,19 +161,22 @@
                 <div class="story-card">
                     <div class="story-icon">🏥</div>
                     <h3>Metro General Hospital</h3>
-                    <p>Reduced claim denials by 42% in the first quarter. The AI identified systemic coding errors that had gone unnoticed for months, saving over $1.8M in recovered revenue.</p>
+                    <p>Reduced claim denials by 42% in the first quarter. The AI identified systemic coding errors that
+                        had gone unnoticed for months, saving over $1.8M in recovered revenue.</p>
                     <div class="story-metric"><strong>$1.8M</strong> recovered</div>
                 </div>
                 <div class="story-card">
                     <div class="story-icon">🩺</div>
                     <h3>Sunrise Health Network</h3>
-                    <p>Cut pre-submission review time from 15 minutes to under 2 minutes per claim. The policy-grounded explanations gave their billing team unprecedented clarity and confidence.</p>
+                    <p>Cut pre-submission review time from 15 minutes to under 2 minutes per claim. The policy-grounded
+                        explanations gave their billing team unprecedented clarity and confidence.</p>
                     <div class="story-metric"><strong>87%</strong> faster reviews</div>
                 </div>
                 <div class="story-card">
                     <div class="story-icon">💊</div>
                     <h3>Pacific Care Alliance</h3>
-                    <p>Achieved a first-pass acceptance rate of 96.3%, up from 71%. The real-time risk scoring allowed staff to fix claims before submission, virtually eliminating rework.</p>
+                    <p>Achieved a first-pass acceptance rate of 96.3%, up from 71%. The real-time risk scoring allowed
+                        staff to fix claims before submission, virtually eliminating rework.</p>
                     <div class="story-metric"><strong>96.3%</strong> acceptance rate</div>
                 </div>
             </div>
@@ -170,7 +189,9 @@
                 <div class="testimonial-track" id="testimonial-track">
                     <div class="testimonial-card">
                         <div class="testimonial-content">
-                            <p>"ClaimShield AI caught a billing pattern we'd missed for years. In just one month, our denial rate dropped from 28% to under 10%. It's like having a senior auditor reviewing every single claim."</p>
+                            <p>"ClaimShield AI caught a billing pattern we'd missed for years. In just one month, our
+                                denial rate dropped from 28% to under 10%. It's like having a senior auditor reviewing
+                                every single claim."</p>
                         </div>
                         <div class="testimonial-author">
                             <img src="/static/images/patient_1.png" alt="Sarah Mitchell">
@@ -182,7 +203,8 @@
                     </div>
                     <div class="testimonial-card">
                         <div class="testimonial-content">
-                            <p>"The policy explanations are game-changing. Instead of guessing why a claim was denied, we now know exactly which rule was triggered and how to fix it before submission."</p>
+                            <p>"The policy explanations are game-changing. Instead of guessing why a claim was denied,
+                                we now know exactly which rule was triggered and how to fix it before submission."</p>
                         </div>
                         <div class="testimonial-author">
                             <img src="/static/images/patient_2.png" alt="James Rodriguez">
@@ -194,7 +216,9 @@
                     </div>
                     <div class="testimonial-card">
                         <div class="testimonial-content">
-                            <p>"We integrated ClaimShield into our workflow and saw immediate results. The SHAP-based feature explanations make it easy to train new staff on what matters most in claim accuracy."</p>
+                            <p>"We integrated ClaimShield into our workflow and saw immediate results. The SHAP-based
+                                feature explanations make it easy to train new staff on what matters most in claim
+                                accuracy."</p>
                         </div>
                         <div class="testimonial-author">
                             <img src="/static/images/patient_3.png" alt="Robert Chen">
@@ -206,7 +230,9 @@
                     </div>
                     <div class="testimonial-card">
                         <div class="testimonial-content">
-                            <p>"As a small practice, every denied claim hurts. ClaimShield AI gave us enterprise-level denial prevention at a fraction of the cost. Our cash flow has never been more predictable."</p>
+                            <p>"As a small practice, every denied claim hurts. ClaimShield AI gave us enterprise-level
+                                denial prevention at a fraction of the cost. Our cash flow has never been more
+                                predictable."</p>
                         </div>
                         <div class="testimonial-author">
                             <img src="/static/images/patient_4.png" alt="Emily Watson">
@@ -235,7 +261,10 @@
         <nav class="top-nav">
             <div class="nav-left">
                 <div class="nav-logo-icon">
-                    <div class="nav-plus-mini"><div class="mp-h"></div><div class="mp-v"></div></div>
+                    <div class="nav-plus-mini">
+                        <div class="mp-h"></div>
+                        <div class="mp-v"></div>
+                    </div>
                 </div>
                 <span class="nav-brand" style="cursor:pointer;" onclick="showHomePage()">ClaimShield AI</span>
             </div>
@@ -278,7 +307,8 @@
                         </div>
                         <div class="form-group">
                             <label for="billed-amount">Billed Amount ($)</label>
-                            <input type="number" id="billed-amount" placeholder="e.g. 15000" min="0.01" step="0.01" required>
+                            <input type="number" id="billed-amount" placeholder="e.g. 15000" min="0.01" step="0.01"
+                                required>
                         </div>
                         <div id="claim-error" class="form-error" style="display:none;"></div>
                         <button type="submit" class="btn-analyze" id="btn-analyze">
@@ -332,4 +362,5 @@
 
     <script src="/static/js/app.js?v=1.0.1"></script>
 </body>
+
 </html>
